@@ -1,6 +1,7 @@
-package com.example.registrasi_farida
+package com.example.registrasi_farida.screen
 
 import android.app.DatePickerDialog
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -9,32 +10,29 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
-fun Hal1Screen() {
-    // state input user
+fun DaftarScreen(navController: NavController) {
     var nim by remember { mutableStateOf("") }
     var nama by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var tglLahir by remember { mutableStateOf("") }
 
-    // snackbar untuk notifikasi
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-
-    // setup date picker
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
+
     val datePickerDialog = DatePickerDialog(
         context,
         { _, year, month, day ->
             val bulan = (month + 1).toString().padStart(2, '0')
             val hari = day.toString().padStart(2, '0')
-            tglLahir = "$hari/$bulan/$year" // format dd/MM/yyyy
+            tglLahir = "$hari/$bulan/$year"
         },
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
@@ -47,48 +45,29 @@ fun Hal1Screen() {
                 .fillMaxSize()
                 .padding(inner)
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally, // konten ditengah
-            verticalArrangement = Arrangement.Top // mulai dari atas
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // judul halaman
             Text(
                 text = "Halaman Registrasi",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            // identitas saya
-            Text(
-                text = "NIM : 235150401111001",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = "Nama : Farida Choirun Nisa",
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            Spacer(Modifier.height(20.dp))
-
-            // form input
             OutlinedTextField(
                 value = nim, onValueChange = { nim = it },
                 label = { Text("NIM") },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)
             )
-
             OutlinedTextField(
                 value = nama, onValueChange = { nama = it },
                 label = { Text("Nama") },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)
             )
-
             OutlinedTextField(
                 value = email, onValueChange = { email = it },
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)
             )
-
-            // field tanggal lahir
             OutlinedTextField(
                 value = tglLahir, onValueChange = {},
                 label = { Text("Tanggal Lahir") },
@@ -101,10 +80,14 @@ fun Hal1Screen() {
                 }
             )
 
-            // tombol daftar
             Button(
                 onClick = {
-                    scope.launch { snackbarHostState.showSnackbar("Pendaftaran berhasil!") }
+                    if (nim.isBlank() || nama.isBlank() || email.isBlank()) {
+                        scope.launch { snackbarHostState.showSnackbar("Isi semua field!") }
+                        return@Button
+                    }
+                    val route = "detail/${Uri.encode(nim)}/${Uri.encode(nama)}/${Uri.encode(email)}"
+                    navController.navigate(route)
                 },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp)
             ) {
@@ -112,10 +95,4 @@ fun Hal1Screen() {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewHal1() {
-    Hal1Screen()
 }
