@@ -3,6 +3,7 @@ package com.example.registrasi_farida.screen
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -13,9 +14,13 @@ fun DetailScreen(navController: NavController, nim: String, nama: String, email:
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Top
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Detail Mahasiswa", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = "Detail Mahasiswa",
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(top = 40.dp, bottom = 16.dp)
+        )
 
         Spacer(Modifier.height(20.dp))
         Text("NIM: $nim", style = MaterialTheme.typography.titleMedium)
@@ -25,10 +30,14 @@ fun DetailScreen(navController: NavController, nim: String, nama: String, email:
         Spacer(Modifier.height(30.dp))
 
         Button(
-            onClick = { navController.navigate("daftar") },
+            onClick = {
+                navController.navigate("login") {
+                    popUpTo("login") { inclusive = true }
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("DAFTAR")
+            Text("KEMBALI KE LOGIN")
         }
     }
 }
